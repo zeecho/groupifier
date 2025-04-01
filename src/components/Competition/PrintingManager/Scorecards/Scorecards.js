@@ -12,6 +12,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 import CubingIcon from '../../../common/CubingIcon/CubingIcon';
 import {
@@ -69,6 +70,43 @@ const Scorecards = ({ wcif }) => {
     selectedRounds.length === 0 || selectedRooms.length === 0;
 
   const [language, setLanguage] = useState('en');
+  const [language2, setLanguage2] = useState('');
+  const [language3, setLanguage3] = useState('');
+
+  const LanguageSelector = ({
+    language,
+    setLanguage,
+    label,
+    includeNoneOption = false,
+    withSubheader = false,
+    tip = false,
+    excludeLanguages = [],
+  }) => {
+    return (
+      <Grid item xs={12}>
+        <FormControl variant="outlined" fullWidth>
+          <InputLabel>{label}</InputLabel>
+          <Select
+            value={language}
+            onChange={e => setLanguage(e.target.value)}
+            label={label}
+          >
+            {includeNoneOption && <MenuItem value="">None</MenuItem>}
+            {languageInfo
+              .filter(l => !excludeLanguages.includes(l.code))
+              .map(({ code, originalName, englishName }) => (
+                <MenuItem key={code} value={code}>
+                  {originalName === englishName
+                    ? originalName
+                    : `${originalName} (${englishName})`}
+                </MenuItem>
+              ))}
+          </Select>
+          <FormHelperText>{tip}</FormHelperText>
+        </FormControl>
+      </Grid>
+    );
+  };
 
   return (
     <Paper style={{ padding: 16 }}>
@@ -125,29 +163,49 @@ const Scorecards = ({ wcif }) => {
       </Grid>
       <Grid container spacing={2} style={{ marginTop: 16, marginBottom: 16 }}>
         <Grid item xs={4}>
-          <FormControl variant="outlined" fullWidth>
-            <InputLabel>Scorecards language</InputLabel>
-            <Select
-              value={language}
-              onChange={e => setLanguage(e.target.value)}
-              label="Scorecards language"
-            >
-              {languageInfo.map(({ code, originalName, englishName }) => (
-                <MenuItem key={code} value={code}>
-                  {originalName === englishName
-                    ? originalName
-                    : `${originalName} (${englishName})`}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <LanguageSelector
+            language={language}
+            setLanguage={setLanguage}
+            label="Scorecards language"
+            tip="Scorecards main language"
+          />
         </Grid>
+        <Grid item xs={4}>
+          <LanguageSelector
+            language={language2}
+            setLanguage={setLanguage2}
+            label="Second scorecards language"
+            includeNoneOption
+            tip="For bilingual scorecards (optional)"
+            excludeLanguages={[language, language3]}
+          />
+        </Grid>
+        {(!Object.hasOwn(wcif, 'extensions') ||
+          wcif.extensions[0].data.scorecardPaperSize !== 'letter') && (
+          <Grid item xs={4}>
+            <LanguageSelector
+              language={language3}
+              setLanguage={setLanguage3}
+              label="Third scorecards language"
+              includeNoneOption
+              tip="For trilingual scorecards (optional)"
+              excludeLanguages={[language, language2]}
+            />
+          </Grid>
+        )}
       </Grid>
       <Grid container spacing={1}>
         <Grid item>
           <Button
             onClick={() =>
-              downloadScorecards(wcif, selectedRounds, selectedRooms, language)
+              downloadScorecards(
+                wcif,
+                selectedRounds,
+                selectedRooms,
+                language,
+                language2,
+                language3
+              )
             }
             disabled={isSelectionEmpty}
           >
@@ -166,7 +224,11 @@ const Scorecards = ({ wcif }) => {
         </Grid>
         <Grid item style={{ flexGrow: 1 }} />
         <Grid item>
-          <Button onClick={() => downloadBlankScorecards(wcif, language)}>
+          <Button
+            onClick={() =>
+              downloadBlankScorecards(wcif, language, language2, language3)
+            }
+          >
             Blank scorecards
           </Button>
         </Grid>

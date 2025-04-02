@@ -46,28 +46,12 @@ const Scorecards = ({ wcif }) => {
     round => parseActivityCode(round.id).roundNumber
   );
 
-  const [selectAllRounds, setSelectAllRounds] = useState(
-    selectedRounds.length === rounds.length
-  );
-
   const handleRoundClick = round => {
     setSelectedRounds(
       selectedRounds.includes(round)
         ? difference(selectedRounds, [round])
         : [...selectedRounds, round]
     );
-  };
-
-  useEffect(() => {
-    setSelectAllRounds(selectedRounds.length === rounds.length);
-  }, [selectedRounds]);
-
-  const handleSelectAllRoundsClick = () => {
-    if (selectedRounds.length < rounds.length) {
-      setSelectedRounds(rounds);
-    } else {
-      setSelectedRounds([]);
-    }
   };
 
   const allRooms = rooms(wcif);
@@ -82,6 +66,18 @@ const Scorecards = ({ wcif }) => {
     );
   };
 
+  const selectAllAssignedRounds = () => {
+    setSelectedRounds(missingScorecards);
+  };
+
+  const selectAllRounds = () => {
+    setSelectedRounds(rounds);
+  };
+
+  const unselectAllRounds = () => {
+    setSelectedRounds([]);
+  };
+
   const isSelectionEmpty =
     selectedRounds.length === 0 || selectedRooms.length === 0;
 
@@ -93,22 +89,12 @@ const Scorecards = ({ wcif }) => {
         <Grid item xs={6}>
           <Typography variant="subtitle1">Select rounds</Typography>
           <List style={{ width: 400 }}>
-            <ListItem
-              button
-              onClick={() => handleSelectAllRoundsClick()}
-              style={{ border: '3px solid gray' }}
-            >
-              <ListItemText
-                primary="Select All"
-                primaryTypographyProps={{ style: { fontWeight: 'bold' } }}
-                style={{ textAlign: 'center' }}
-              />
-              <Checkbox
-                checked={selectAllRounds}
-                tabIndex={-1}
-                disableRipple
-                style={{ padding: 0 }}
-              />
+            <ListItem style={{ border: '3px solid gray' }}>
+              <Button onClick={() => selectAllAssignedRounds()}>
+                All assigned (default)
+              </Button>
+              <Button onClick={() => selectAllRounds()}>All</Button>
+              <Button onClick={() => unselectAllRounds()}>None</Button>
             </ListItem>
             {rounds.map(round => (
               <ListItem

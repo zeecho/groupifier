@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
@@ -38,6 +38,10 @@ const Scorecards = ({ wcif }) => {
       ? missingScorecards
       : []
   );
+  const [selectAllRounds, setSelectAllRounds] = useState(
+    selectedRounds.length === missingScorecards.length
+  );
+
   const rounds = sortBy(
     roundsWithoutResults(wcif).filter(
       round => parseActivityCode(round.id).eventId !== '333fm'
@@ -53,9 +57,24 @@ const Scorecards = ({ wcif }) => {
     );
   };
 
+  useEffect(() => {
+    setSelectAllRounds(selectedRounds.length === missingScorecards.length);
+  }, [selectedRounds]);
+
+  const handleSelectAllRoundsClick = () => {
+    if (selectedRounds.length < missingScorecards.length) {
+      setSelectedRounds(missingScorecards);
+    } else {
+      setSelectedRounds([]);
+    }
+  };
+
   const allRooms = rooms(wcif);
 
   const [selectedRooms, setSelectedRooms] = useState(allRooms);
+  const [selectAllRooms, setSelectAllRooms] = useState(
+    selectedRooms.length === allRooms.length
+  );
 
   const handleRoomClick = room => {
     setSelectedRooms(
@@ -63,6 +82,18 @@ const Scorecards = ({ wcif }) => {
         ? difference(selectedRooms, [room])
         : [...selectedRooms, room]
     );
+  };
+
+  useEffect(() => {
+    setSelectAllRooms(selectedRooms.length === allRooms.length);
+  }, [selectedRooms]);
+
+  const handleSelectAllRoomsClick = () => {
+    if (selectedRooms.length < allRooms.length) {
+      setSelectedRooms(allRooms);
+    } else {
+      setSelectedRooms([]);
+    }
   };
 
   const isSelectionEmpty =
@@ -76,6 +107,23 @@ const Scorecards = ({ wcif }) => {
         <Grid item xs={6}>
           <Typography variant="subtitle1">Select rounds</Typography>
           <List style={{ width: 400 }}>
+            <ListItem
+              button
+              onClick={() => handleSelectAllRoundsClick()}
+              style={{ border: '3px solid gray' }}
+            >
+              <ListItemText
+                primary="Select All"
+                primaryTypographyProps={{ style: { fontWeight: 'bold' } }}
+                style={{ textAlign: 'center' }}
+              />
+              <Checkbox
+                checked={selectAllRounds}
+                tabIndex={-1}
+                disableRipple
+                style={{ padding: 0 }}
+              />
+            </ListItem>
             {rounds.map(round => (
               <ListItem
                 key={round.id}
@@ -103,6 +151,23 @@ const Scorecards = ({ wcif }) => {
           <Grid item xs={6}>
             <Typography variant="subtitle1">Select rooms</Typography>
             <List style={{ width: 400 }}>
+              <ListItem
+                button
+                onClick={() => handleSelectAllRoomsClick()}
+                style={{ border: '3px solid gray' }}
+              >
+                <ListItemText
+                  primary="Select All"
+                  primaryTypographyProps={{ style: { fontWeight: 'bold' } }}
+                  style={{ textAlign: 'center' }}
+                />
+                <Checkbox
+                  checked={selectAllRooms}
+                  tabIndex={-1}
+                  disableRipple
+                  style={{ padding: 0 }}
+                />
+              </ListItem>
               {allRooms.map(room => (
                 <ListItem
                   key={room.id}

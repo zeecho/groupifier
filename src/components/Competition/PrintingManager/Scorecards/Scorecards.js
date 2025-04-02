@@ -39,15 +39,16 @@ const Scorecards = ({ wcif }) => {
       ? missingScorecards
       : []
   );
-  const [selectAllRounds, setSelectAllRounds] = useState(
-    selectedRounds.length === missingScorecards.length
-  );
 
   const rounds = sortBy(
     roundsWithoutResults(wcif).filter(
       round => parseActivityCode(round.id).eventId !== '333fm'
     ),
     round => parseActivityCode(round.id).roundNumber
+  );
+
+  const [selectAllRounds, setSelectAllRounds] = useState(
+    selectedRounds.length === rounds.length
   );
 
   const handleRoundClick = round => {
@@ -59,12 +60,12 @@ const Scorecards = ({ wcif }) => {
   };
 
   useEffect(() => {
-    setSelectAllRounds(selectedRounds.length === missingScorecards.length);
+    setSelectAllRounds(selectedRounds.length === rounds.length);
   }, [selectedRounds]);
 
   const handleSelectAllRoundsClick = () => {
-    if (selectedRounds.length < missingScorecards.length) {
-      setSelectedRounds(missingScorecards);
+    if (selectedRounds.length < rounds.length) {
+      setSelectedRounds(rounds);
     } else {
       setSelectedRounds([]);
     }
@@ -73,9 +74,6 @@ const Scorecards = ({ wcif }) => {
   const allRooms = rooms(wcif);
 
   const [selectedRooms, setSelectedRooms] = useState(allRooms);
-  const [selectAllRooms, setSelectAllRooms] = useState(
-    selectedRooms.length === allRooms.length
-  );
 
   const handleRoomClick = room => {
     setSelectedRooms(
@@ -83,18 +81,6 @@ const Scorecards = ({ wcif }) => {
         ? difference(selectedRooms, [room])
         : [...selectedRooms, room]
     );
-  };
-
-  useEffect(() => {
-    setSelectAllRooms(selectedRooms.length === allRooms.length);
-  }, [selectedRooms]);
-
-  const handleSelectAllRoomsClick = () => {
-    if (selectedRooms.length < allRooms.length) {
-      setSelectedRooms(allRooms);
-    } else {
-      setSelectedRooms([]);
-    }
   };
 
   const isSelectionEmpty =
@@ -189,23 +175,6 @@ const Scorecards = ({ wcif }) => {
           <Grid item xs={6}>
             <Typography variant="subtitle1">Select rooms</Typography>
             <List style={{ width: 400 }}>
-              <ListItem
-                button
-                onClick={() => handleSelectAllRoomsClick()}
-                style={{ border: '3px solid gray' }}
-              >
-                <ListItemText
-                  primary="Select All"
-                  primaryTypographyProps={{ style: { fontWeight: 'bold' } }}
-                  style={{ textAlign: 'center' }}
-                />
-                <Checkbox
-                  checked={selectAllRooms}
-                  tabIndex={-1}
-                  disableRipple
-                  style={{ padding: 0 }}
-                />
-              </ListItem>
               {allRooms.map(room => (
                 <ListItem
                   key={room.id}

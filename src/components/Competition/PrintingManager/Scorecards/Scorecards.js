@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
@@ -115,7 +115,7 @@ const Scorecards = ({ wcif }) => {
         <Grid item xs={6}>
           <Typography variant="subtitle1">Select rounds</Typography>
           <List style={{ width: 400 }}>
-            <ListItem style={{ border: '3px solid gray' }}>
+            <ListItem style={{ border: '2px dashed gray' }}>
               <Grid container>
                 <Grid item xs={12}>
                   Quick preselection:{' '}

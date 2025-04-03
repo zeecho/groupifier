@@ -77,28 +77,6 @@ const Scorecards = ({ wcif }) => {
         <Grid item xs={6}>
           <Typography variant="subtitle1">Select rounds</Typography>
           <List style={{ width: 400 }}>
-            <ListItem style={{ border: '2px dashed gray' }}>
-              <Grid container>
-                <Grid item xs={12}>
-                  Quick preselection:{' '}
-                </Grid>
-                <Grid item xs={12}>
-                  <Button onClick={() => setSelectedRounds(missingScorecards)}>
-                    All assigned
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button onClick={() => setSelectedRounds(rounds)}>
-                    All (including subsequent rounds)
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button onClick={() => setSelectedRounds([])}>
-                    Unselect everything
-                  </Button>
-                </Grid>
-              </Grid>
-            </ListItem>
             {rounds.map(round => (
               <ListItem
                 key={round.id}
@@ -124,6 +102,34 @@ const Scorecards = ({ wcif }) => {
         </Grid>
         {allRooms.length > 1 && (
           <Grid item xs={6}>
+            <List style={{ width: 400 }}>
+              <ListItem style={{ border: '2px dashed gray' }}>
+                <Grid container>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1">
+                      Pre-select rounds:
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button
+                      onClick={() => setSelectedRounds(missingScorecards)}
+                    >
+                      All assigned
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button onClick={() => setSelectedRounds(rounds)}>
+                      All (including subsequent rounds)
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button onClick={() => setSelectedRounds([])}>
+                      Unselect everything
+                    </Button>
+                  </Grid>
+                </Grid>
+              </ListItem>
+            </List>
             <Typography variant="subtitle1">Select rooms</Typography>
             <List style={{ width: 400 }}>
               {allRooms.map(room => (

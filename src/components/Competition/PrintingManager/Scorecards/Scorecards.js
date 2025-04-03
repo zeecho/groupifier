@@ -203,7 +203,7 @@ const Scorecards = ({ wcif }) => {
             excludeLanguages={[language, language3]}
           />
         </Grid>
-        {(!Object.hasOwn(wcif, 'extensions') ||
+        {(!(0 in wcif.extensions) ||
           wcif.extensions[0].data.scorecardPaperSize !== 'letter') && (
           <Grid item xs={4}>
             <LanguageSelector

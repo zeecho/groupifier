@@ -355,7 +355,6 @@ const scorecard = ({
   language2 = '',
   language3 = '',
 }) => {
-  const defaultTranslationData = translation('en');
   const translationData = translation(language);
   const translationData2 =
     language2 !== language ? translation(language2) : null;

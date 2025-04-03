@@ -66,18 +66,6 @@ const Scorecards = ({ wcif }) => {
     );
   };
 
-  const selectAllAssignedRounds = () => {
-    setSelectedRounds(missingScorecards);
-  };
-
-  const selectAllRounds = () => {
-    setSelectedRounds(rounds);
-  };
-
-  const unselectAllRounds = () => {
-    setSelectedRounds([]);
-  };
-
   const isSelectionEmpty =
     selectedRounds.length === 0 || selectedRooms.length === 0;
 
@@ -90,11 +78,26 @@ const Scorecards = ({ wcif }) => {
           <Typography variant="subtitle1">Select rounds</Typography>
           <List style={{ width: 400 }}>
             <ListItem style={{ border: '3px solid gray' }}>
-              <Button onClick={() => selectAllAssignedRounds()}>
-                All assigned (default)
-              </Button>
-              <Button onClick={() => selectAllRounds()}>All</Button>
-              <Button onClick={() => unselectAllRounds()}>None</Button>
+              <Grid container>
+                <Grid item xs={12}>
+                  Quick preselection:{' '}
+                </Grid>
+                <Grid item xs={12}>
+                  <Button onClick={() => setSelectedRounds(missingScorecards)}>
+                    All assigned
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button onClick={() => setSelectedRounds(rounds)}>
+                    All (including subsequent rounds)
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button onClick={() => setSelectedRounds([])}>
+                    Unselect everything
+                  </Button>
+                </Grid>
+              </Grid>
             </ListItem>
             {rounds.map(round => (
               <ListItem

@@ -377,7 +377,7 @@ const texts = {
     extra: 'Tentativo extra',
     extra_short: 'Extra',
     delegateInitials: 'Iniziali del delegato',
-    delegateInitials: 'Delegato',
+    delegateInitials_short: 'Delegato',
     cutoff: 'Taglio',
     timeLimit: 'Tempo limite',
     total: 'totale',

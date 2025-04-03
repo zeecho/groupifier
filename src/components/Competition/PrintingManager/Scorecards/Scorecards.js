@@ -77,7 +77,7 @@ const Scorecards = ({ wcif }) => {
         <Grid item xs={6}>
           <Typography variant="subtitle1">Select rounds</Typography>
           <List style={{ width: 400 }}>
-            <ListItem style={{ border: '3px solid gray' }}>
+            <ListItem style={{ border: '2px dashed gray' }}>
               <Grid container>
                 <Grid item xs={12}>
                   Quick preselection:{' '}

@@ -528,10 +528,10 @@ const scorecard = ({
       table: {
         widths: [
           16,
-          getWidthOfBoxOrAuto(t('scr'), 25),
+          getWidthOfBoxOrAuto(t('result'), 25, 30),
           '*',
-          getWidthOfBoxOrAuto(t('judge'), 25),
-          getWidthOfBoxOrAuto(t('comp'), 25),
+          getWidthOfBoxOrAuto(t('judge'), 25, 30),
+          getWidthOfBoxOrAuto(t('comp'), 25, 30),
         ] /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */,
         body: [
           columnLabels(['', t('scr'), t('result'), t('judge'), t('comp')], {
@@ -738,7 +738,11 @@ const attemptRow = attemptNumber => [
 
 const noBorder = { border: [false, false, false, false] };
 
-const getWidthOfBoxOrAuto = (translatedString, defaultWidth = 25) => {
+const getWidthOfBoxOrAuto = (
+  translatedString,
+  defaultWidth = 25,
+  maxWidth = false
+) => {
   // We define here what is considered "too short" for a string
   const shortThreshold = 5;
   const checkNewLineBreak = translatedString.indexOf('\n');
@@ -753,5 +757,5 @@ const getWidthOfBoxOrAuto = (translatedString, defaultWidth = 25) => {
   const hasLongString = partsOfString.some(
     part => part.length >= shortThreshold
   );
-  return hasLongString ? 'auto' : defaultWidth;
+  return hasLongString ? (maxWidth ? maxWidth : 'auto') : defaultWidth;
 };

@@ -1,16 +1,17 @@
 const languageInfo = [
   { code: 'br', originalName: 'Brezhoneg', englishName: 'Breton' },
   { code: 'ca', originalName: 'Català', englishName: 'Catalan' },
+  { code: 'de', originalName: 'Deutsch', englishName: 'German' },
   { code: 'en', originalName: 'English', englishName: 'English' },
   { code: 'es', originalName: 'Español', englishName: 'Spanish' },
   { code: 'eo', originalName: 'Esperanto', englishName: 'Esperanto' },
   { code: 'eu', originalName: 'Euskara', englishName: 'Basque' },
   { code: 'fr', originalName: 'Français', englishName: 'French' },
   { code: 'galo', originalName: 'Galo', englishName: 'Gallo' },
+  { code: 'it', originalName: 'Italiano', englishName: 'Italian' },
+  { code: 'pcd', originalName: 'Picard', englishName: 'Picard' },
   { code: 'pl', originalName: 'Polski', englishName: 'Polish' },
-  { code: 'it', originalName: 'Italiano', englishName: 'Italian'},
-  { code: 'de', originalName: 'Deutsch', englishName: 'German'},
-  { code: 'tnt', originalName: 'Trentin', englishName: 'Trentin'},
+  { code: 'tnt', originalName: 'Trentin', englishName: 'Trentin' },
 ];
 
 const texts = {
@@ -158,7 +159,7 @@ const texts = {
       '333mbf': '3x3x3 Multi Ciega',
     },
   },
-  
+
   eo: {
     eventLabel: 'Konkursero',
     round: "Raŭnd'",
@@ -378,7 +379,7 @@ const texts = {
     name: 'Name',
     newCompetitor: 'Neuer Teilnehmer',
     scr: 'Scr',
-    result: 'Ergebnis', 
+    result: 'Ergebnis',
     judge: 'Judge',
     comp: 'Teil',
     extra: 'extra Versuch',
@@ -404,7 +405,7 @@ const texts = {
       '444bf': '4x4x4 Blind',
       '555bf': '5x5x5 Blind',
       '333mbf': '3x3x3 Mehrfach Blind',
-    }
+    },
   },
   tnt: {
     eventLabel: 'Evènto',
@@ -440,8 +441,44 @@ const texts = {
       '444bf': '4x4x4 sènza vardar',
       '555bf': '5x5x5 sènza vardar',
       '333mbf': 'tanti 3x3x3 sènza vardar',
-    }
-  }
+    },
+  },
+  pcd: {
+    eventLabel: "Épreuf'",
+    round: "Ch'tour",
+    group: "Ch'gro.",
+    station: 'Estation',
+    name: 'Nom',
+    newCompetitor: "Nouvieu ch'compétiteur",
+    scr: "Mélanch'eur",
+    result: "R'zultat",
+    judge: 'Juche',
+    comp: "Ch'comp.",
+    extra: 'Extro',
+    delegateInitials: 'Délédjé',
+    cutoff: 'Cutoff',
+    timeLimit: 'Timp limite',
+    total: 'total',
+    eventName: {
+      '333': 'Tchube 3x3x3',
+      '222': 'Tchube 2x2x2',
+      '444': 'Tchube 4x4x4',
+      '555': 'Tchube 5x5x5',
+      '666': 'Tchube 6x6x6',
+      '777': 'Tchube 7x7x7',
+      '333bf': '3x3x3 chés zius bindés',
+      '333fm': "3x3x3 résoulution l'pu courte",
+      '333oh': '3x3x3 à éne main',
+      minx: 'Megaminx',
+      pyram: 'Pyraminx',
+      clock: 'Clock',
+      skewb: 'Skewb',
+      sq1: 'Square-1',
+      '444bf': '4x4x4 chés zius bindés',
+      '555bf': '5x5x5 chés zius bindés',
+      '333mbf': 'Pusieurs 3x3x3 chés zius bindés',
+    },
+  },
 };
 
 export const translation = language => texts[language];

@@ -445,15 +445,12 @@ const scorecard = ({
       text: competitionName,
       bold: true,
       fontSize: 15,
-      // If we have a string accross three lines (or two lines for US Letter) we need to gain some space by moving everything a bit up
+      // If we have a string potentially accross three lines we need to gain some space by moving everything a bit up
       margin: [
         0,
-        competitor.name &&
-        ((scorecardPaperSize === 'letter' && language2) || language3)
-          ? -15
-          : 0,
+        competitor.name && language2 ? -15 : 0,
         0,
-        language3 ? 0 : language2 ? 5 : 10,
+        language3 ? 0 : 10,
       ],
       alignment: 'center',
     },

@@ -528,10 +528,10 @@ const scorecard = ({
       table: {
         widths: [
           16,
-          25,
+          getWidthOfBoxOrAuto(t('scr'), 25),
           '*',
-          25,
-          25,
+          getWidthOfBoxOrAuto(t('judge'), 25),
+          getWidthOfBoxOrAuto(t('comp'), 25),
         ] /* Note: 16 (width) + 4 + 4 (defult left and right padding) + 1 (left border) = 25 */,
         body: [
           columnLabels(['', t('scr'), t('result'), t('judge'), t('comp')], {

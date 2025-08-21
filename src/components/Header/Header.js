@@ -33,7 +33,7 @@ const Header = ({ isSignedIn, onSignIn, onSignOut }) => {
             className={classes.titleLink}
           >
             <PeopleIcon className={classes.titleIcon} />
-            Groupifier
+            Groupifier-multilingual
           </Link>
         </Typography>
         {isSignedIn ? (

@@ -15,6 +15,10 @@ const features = [
   'Generates documents like scorecards and competitor cards with task assignments.',
 ];
 
+const featuresGroupifierMultilingual = [
+  'Allows you to create bilingual or trilingual scorecards',
+];
+
 const Home = () => (
   <Grid container spacing={1} direction="column">
     <Grid item>
@@ -32,6 +36,21 @@ const Home = () => (
     <Grid item>
       <List>
         {features.map(feature => (
+          <ListItem key={feature}>
+            <ListItemIcon>
+              <CheckIcon />
+            </ListItemIcon>
+            <ListItemText primary={feature} />
+          </ListItem>
+        ))}
+      </List>
+    </Grid>
+    <Grid item>
+      <Typography variant="h4">What does this fork add?</Typography>
+    </Grid>
+    <Grid item>
+      <List>
+        {featuresGroupifierMultilingual.map(feature => (
           <ListItem key={feature}>
             <ListItemIcon>
               <CheckIcon />

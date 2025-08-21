@@ -36,11 +36,14 @@ const links = [
     text: 'Guide',
     url: 'https://github.com/jonatanklosko/groupifier/wiki/Guide',
   },
-  { text: 'GitHub', url: 'https://github.com/jonatanklosko/groupifier' },
-  { text: 'Contact', url: 'mailto:jonatanklosko@gmail.com' },
+  {
+    text: 'Original GitHub',
+    url: 'https://github.com/jonatanklosko/groupifier',
+  },
+  { text: 'Fork GitHub', url: 'https://github.com/zeecho/groupifier' },
   {
     text: `v${version}`,
-    url: 'https://github.com/jonatanklosko/groupifier',
+    url: 'https://github.com/zeecho/groupifier',
   },
 ];
 
@@ -58,6 +61,15 @@ const Footer = () => {
             rel="noopener noreferrer"
           >
             Jonatan Kłosko
+          </Link>
+           and forked by{' '}
+          <Link
+            className={classes.link}
+            href="https://github.com/zeecho/groupifier"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            zeecho
           </Link>
         </Typography>
       </Grid>

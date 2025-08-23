@@ -433,14 +433,27 @@ const scorecard = ({
     // Sometimes we want the different languages in one line and sometimes in new lines
     const separator = mergeInOneLine ? ' | ' : '\n';
     // Build strings for secondary and tertiary translations. If we're in one-line mode and we have a short version then we take it.
-    const secondaryString =
+    let secondaryString =
       mergeInOneLine && translationData2[stringKey + '_short']
         ? translationData2[stringKey + '_short']
-        : translationData2[stringKey] ?? translationDataEn[stringKey];
-    const tertiaryString =
+        : translationData2[stringKey];
+    let tertiaryString =
       mergeInOneLine && translationData3?.[stringKey + '_short']
         ? translationData3?.[stringKey + '_short']
-        : translationData3?.[stringKey] ?? translationDataEn[stringKey];
+        : translationData3?.[stringKey];
+
+    // Handle case where the translation is missing
+    const englishBackupString =
+      mergeInOneLine && translationDataEn?.[stringKey + '_short']
+        ? translationDataEn?.[stringKey + '_short']
+        : translationDataEn?.[stringKey];
+    if (language2 && !secondaryString) {
+      secondaryString = englishBackupString;
+    }
+    if (language3 && !secondaryString) {
+      tertiaryString = englishBackupString;
+    }
+
     let result = primaryShort;
     if (mergeInOneLine) {
       if (primaryShort !== secondaryString) {

@@ -13,6 +13,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import CubingIcon from '../../../common/CubingIcon/CubingIcon';
 import {
@@ -191,14 +192,19 @@ const Scorecards = ({ wcif }) => {
         )}
       </Grid>
       <Grid container spacing={2} style={{ marginTop: 16, marginBottom: 16 }}>
-        <Grid item xs={4}>
-          <LanguageSelector
-            language={language}
-            setLanguage={setLanguage}
-            label="Scorecards language"
-            tip="Scorecards main language"
-          />
-        </Grid>
+        <Tooltip
+          placement="left"
+          title="Note: in bilingual and trilingual mode, events names will be in this language only"
+        >
+          <Grid item xs={4}>
+            <LanguageSelector
+              language={language}
+              setLanguage={setLanguage}
+              label="Scorecards language"
+              tip="Scorecards main language"
+            />
+          </Grid>
+        </Tooltip>
         <Grid item xs={4}>
           <LanguageSelector
             language={language2}

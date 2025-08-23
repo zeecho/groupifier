@@ -46,7 +46,9 @@ const Home = () => (
       </List>
     </Grid>
     <Grid item>
-      <Typography variant="h4">What does this fork add?</Typography>
+      <Typography variant="h4" style={{ fontWeight: 'bold' }}>
+        What does this fork add?
+      </Typography>
     </Grid>
     <Grid item>
       <List>

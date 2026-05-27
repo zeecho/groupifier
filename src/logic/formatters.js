@@ -2,12 +2,16 @@ import { parseActivityCode } from './activities';
 import { shortEventNameById } from './events';
 
 export const cutoffToString = (cutoff, eventId) => {
+  // TODO: currently WCIF v2 still returns attemptResult, rather than resultValue.
+  // This can be simplified once it is always resultValue.
+  const value = cutoff.resultValue || cutoff.attemptResult;
+
   if (eventId === '333mbf') {
-    return `> ${multibldAttemptResultToPoints(cutoff.attemptResult)} points`;
+    return `> ${multibldResultValueToPoints(value)} points`;
   } else if (eventId === '333fm') {
-    return `< ${cutoff.attemptResult} moves`;
+    return `< ${value} moves`;
   } else {
-    return `< ${centisecondsToClockFormat(cutoff.attemptResult)}`;
+    return `< ${centisecondsToClockFormat(value)}`;
   }
 };
 
@@ -28,8 +32,8 @@ export const timeLimitToString = (timeLimit, options = {}) => {
   }
 };
 
-const multibldAttemptResultToPoints = attemptResult =>
-  99 - (Math.floor(attemptResult / 10000000) % 100);
+const multibldResultValueToPoints = resultValue =>
+  99 - (Math.floor(resultValue / 10000000) % 100);
 
 export const centisecondsToClockFormat = centiseconds => {
   const date = new Date(null);

@@ -13,7 +13,7 @@ export const getUpcomingManageableCompetitions = () => {
 };
 
 export const getWcif = competitionId =>
-  wcaApiFetch(`/competitions/${competitionId}/wcif`);
+  wcaApiFetch(`/competitions/${competitionId}/wcif/version/2`);
 
 const updateWcif = (competitionId, wcif) =>
   wcaApiFetch(`/competitions/${competitionId}/wcif`, {
@@ -27,7 +27,9 @@ export const saveWcifChanges = (previousWcif, newWcif) => {
   );
   if (keysDiff.length === 0) return Promise.resolve();
 
-  let wcifDiff = pick(newWcif, keysDiff);
+  // Note: we always include formatVersion, so that the update endpoint
+  // knows how to interpret the data.
+  let wcifDiff = pick(newWcif, ['formatVersion', ...keysDiff]);
 
   // TODO: remove once WCIF registration status evaluation is resolved
   if (wcifDiff.persons) {

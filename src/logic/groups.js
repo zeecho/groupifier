@@ -20,6 +20,7 @@ import {
   zip,
 } from './utils';
 import { getExtensionData } from './wcif-extensions';
+import { roundById } from './wcif';
 import {
   activitiesIntersection,
   activitiesOverlap,
@@ -229,8 +230,11 @@ const sortedCompetitorsForRound = (wcif, roundId) => {
     wcif
   );
   const sortedByRanks = competitorsForRound(wcif, roundId);
-  const { eventId, roundNumber } = parseActivityCode(roundId);
-  if (roundNumber > 1) return sortedByRanks;
+  const { eventId } = parseActivityCode(roundId);
+  const round = roundById(wcif, roundId);
+  if (round.participationRuleset.participationSource.type !== 'registrations') {
+    return sortedByRanks;
+  }
   if (competitorsSortingRule === 'ranks') return sortedByRanks;
   if (
     competitorsSortingRule === 'balanced' &&

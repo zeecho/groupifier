@@ -47,7 +47,17 @@ const scorecardPaperSizeInfos = {
   },
 };
 
-const maxAttemptCountByFormat = { '1': 1, '2': 2, '3': 3, m: 3, a: 5 };
+// Note: the current scorecards are not really applicable to h2h, but
+// we include the format below for completeness, so it doesn't crash.
+const maxAttemptCountByFormat = {
+  '1': 1,
+  '2': 2,
+  '3': 3,
+  '5': 5,
+  m: 3,
+  a: 5,
+  h: 5,
+};
 
 export const downloadScorecards = (
   wcif,
@@ -295,7 +305,14 @@ const cutLine = properties => ({
   lineColor: '#888888',
 });
 
-const scorecards = (wcif, rounds, rooms, language, language2, language3) => {
+export const scorecards = (
+  wcif,
+  rounds,
+  rooms,
+  language,
+  language2,
+  language3
+) => {
   const {
     localNamesFirst,
     printOneName,
@@ -389,7 +406,9 @@ const shouldPrintScrambleChecker = (competitor, round, wcif) => {
     printScrambleCheckerForTopRankedCompetitors,
     printScrambleCheckerForFinalRounds,
   } = getExtensionData('CompetitionConfig', wcif);
-
+  if (['555', '666', '777', 'minx'].includes(eventId)) {
+    return false;
+  }
   if (printScrambleCheckerForTopRankedCompetitors) {
     const singlePersonalBest = competitor.personalBests?.find(
       personalBest =>
@@ -408,30 +427,78 @@ const shouldPrintScrambleChecker = (competitor, round, wcif) => {
       return true;
     }
   }
-  if (
-    printScrambleCheckerForFinalRounds &&
-    round.advancementCondition === null
-  ) {
+  if (printScrambleCheckerForFinalRounds && isFinal(round, wcif)) {
     return true;
   }
 
   return false;
 };
 
+const isFinal = (round, wcif) => {
+  const { eventId, roundNumber } = parseActivityCode(round.id);
+  const event = wcif.events.find(event => event.id === eventId);
+  return roundNumber === event.rounds.length;
+};
+
 const groupActivitiesWithCompetitors = (wcif, roundId) => {
+  const sortedGroupActivities = hasDistributedAttempts(roundId)
+    ? groupActivitiesByRound(wcif, roundId)
+        /* Don't duplicate scorecards for each attempt.  */
+        .filter(
+          ({ activityCode }) =>
+            parseActivityCode(activityCode).attemptNumber === 1
+        )
+    : sortBy(
+        groupActivitiesByRound(wcif, roundId),
+        ({ activityCode }) => parseActivityCode(activityCode).groupNumber
+      );
   const sortedCompetitors = competitorsForRound(wcif, roundId);
+  const competitorOrderByRegistrantId = new Map(
+    (sortedCompetitors || []).map((competitor, index) => [
+      competitor.registrantId,
+      index,
+    ])
+  );
+  const assignedCompetitorsByGroup = sortedGroupActivities.map(
+    groupActivity => [
+      groupActivity,
+      wcif.persons
+        .filter(competitor =>
+          hasAssignment(competitor, groupActivity.id, 'competitor')
+        )
+        .map(competitor => [
+          competitor,
+          getAssignment(competitor, groupActivity.id, 'competitor'),
+        ])
+        .sort(([competitorA, assignmentA], [competitorB, assignmentB]) => {
+          const orderA =
+            competitorOrderByRegistrantId.get(competitorA.registrantId) ??
+            Number.MAX_SAFE_INTEGER;
+          const orderB =
+            competitorOrderByRegistrantId.get(competitorB.registrantId) ??
+            Number.MAX_SAFE_INTEGER;
+          if (orderA !== orderB) return orderA - orderB;
+          const stationA = assignmentA.stationNumber ?? Number.MAX_SAFE_INTEGER;
+          const stationB = assignmentB.stationNumber ?? Number.MAX_SAFE_INTEGER;
+          if (stationA !== stationB) return stationA - stationB;
+          return competitorA.name.localeCompare(competitorB.name);
+        })
+        .map(([competitor, assignment]) => [
+          competitor,
+          assignment.stationNumber,
+        ]),
+    ]
+  );
+
+  if (
+    assignedCompetitorsByGroup.some(
+      ([_, competitorsWithStation]) => competitorsWithStation.length > 0
+    )
+  ) {
+    return assignedCompetitorsByGroup;
+  }
+
   if (sortedCompetitors) {
-    const sortedGroupActivities = hasDistributedAttempts(roundId)
-      ? groupActivitiesByRound(wcif, roundId)
-          /* Don't duplicate scorecards for each attempt.  */
-          .filter(
-            ({ activityCode }) =>
-              parseActivityCode(activityCode).attemptNumber === 1
-          )
-      : sortBy(
-          groupActivitiesByRound(wcif, roundId),
-          ({ activityCode }) => parseActivityCode(activityCode).groupNumber
-        );
     return sortedGroupActivities.map(groupActivity => [
       groupActivity,
       sortedCompetitors
@@ -444,18 +511,18 @@ const groupActivitiesWithCompetitors = (wcif, roundId) => {
             .stationNumber,
         ]),
     ]);
-  } else {
-    /* If competitors for this round are not known yet, generate nameless scorecards. */
-    const expectedCompetitorCount = getExpectedCompetitorsByRound(wcif)[roundId]
-      .length;
-    const groupsWithSize = hasDistributedAttempts(roundId)
-      ? [[groupActivitiesByRound(wcif, roundId)[0], expectedCompetitorCount]]
-      : sortedGroupActivitiesWithSize(wcif, roundId, expectedCompetitorCount);
-    return groupsWithSize.map(([groupActivity, size]) => [
-      groupActivity,
-      times(size, () => [{ name: null, registrantId: null }, null]),
-    ]);
   }
+
+  /* If competitors for this round are not known yet, generate nameless scorecards. */
+  const expectedCompetitorCount = getExpectedCompetitorsByRound(wcif)[roundId]
+    .length;
+  const groupsWithSize = hasDistributedAttempts(roundId)
+    ? [[groupActivitiesByRound(wcif, roundId)[0], expectedCompetitorCount]]
+    : sortedGroupActivitiesWithSize(wcif, roundId, expectedCompetitorCount);
+  return groupsWithSize.map(([groupActivity, size]) => [
+    groupActivity,
+    times(size, () => [{ name: null, registrantId: null }, null]),
+  ]);
 };
 
 const blankScorecards = (wcif, language, language2, language3) => {
@@ -511,6 +578,7 @@ const scorecard = ({
       ? translation(language3)
       : null;
   const translationDataEn = translation('en');
+  const translationFont = fontForLanguage(language);
 
   // This handles all the translations (monolingual and multilingual)
   const t = (
@@ -632,16 +700,27 @@ const scorecard = ({
         ],
         body: [
           columnLabels([
-            t('eventLabel'),
-            { text: t('round'), alignment: 'center' },
-            { text: t('group'), alignment: 'center' },
+            { text: t('eventLabel'), font: translationFont },
+            { text: t('round'), alignment: 'center', font: translationFont },
+            { text: t('group'), alignment: 'center', font: translationFont },
             ...(printStations
-              ? [{ text: t('station'), alignment: 'center' }]
+              ? [
+                  {
+                    text: t('station'),
+                    alignment: 'center',
+                    font: translationFont,
+                  },
+                ]
               : []),
           ]),
           [
             // in multi language mode, use only the primary language for the event
-            eventId ? t('eventName', true, 'long')?.[eventId] : ' ',
+            eventId
+              ? {
+                  text: t('eventName', true, 'long')?.[eventId],
+                  font: translationFont,
+                }
+              : ' ',
             { text: roundNumber, alignment: 'center' },
             { text: groupNumber, alignment: 'center' },
             ...(printStations
@@ -657,9 +736,14 @@ const scorecard = ({
         widths: [30, '*'],
         body: [
           columnLabels([
-            'ID',
+            { text: t('id', true), font: translationFont },
             [
-              { text: t('name', true), alignment: 'left', width: 'auto' },
+              {
+                text: t('name', true),
+                alignment: 'left',
+                width: 'auto',
+                font: translationFont,
+              },
               {
                 text:
                   competitor.wcaId ||
@@ -673,6 +757,7 @@ const scorecard = ({
                       : t('newCompetitor', true, 'long')
                     : ' '),
                 alignment: 'right',
+                font: translationFont,
               },
             ],
           ]),
@@ -707,11 +792,13 @@ const scorecard = ({
           columnLabels(
             [
               '',
-              t('scr'),
-              ...(printScrambleCheckerBox ? [t('check')] : []),
-              t('result'),
-              t('judge'),
-              t('comp'),
+              { text: t('scr'), font: translationFont },
+              ...(printScrambleCheckerBox
+                ? [{ text: t('check'), font: translationFont }]
+                : []),
+              { text: t('result'), font: translationFont },
+              { text: t('judge'), font: translationFont },
+              { text: t('comp'), font: translationFont },
             ],
             {
               alignment: 'center',
@@ -738,6 +825,7 @@ const scorecard = ({
               colSpan: 5 + printScrambleCheckerBox,
               margin: [0, 1],
               fontSize: 10,
+              font: translationFont,
             },
           ],
           attemptRow('_', printScrambleCheckerBox),
@@ -757,6 +845,7 @@ const scorecard = ({
         ? `${t('cutoff', true)}: ${cutoffToString(cutoff, eventId)}`
         : '',
       fontSize: 10,
+      font: translationFont,
       alignment: 'center',
     },
     {
@@ -766,6 +855,7 @@ const scorecard = ({
           })}`
         : ' ',
       fontSize: 10,
+      font: translationFont,
       alignment: 'center',
       margin: [0, 0, 0, -10],
     },
@@ -963,4 +1053,11 @@ const getWidthOfBoxOrAuto = (
     part => part.length >= shortThreshold
   );
   return hasLongString ? (maxWidth ? maxWidth : 'auto') : defaultWidth;
+};
+
+const fontForLanguage = language => {
+  if (language === 'cn') {
+    return 'WenQuanYiZenHei';
+  }
+  return 'Roboto';
 };
